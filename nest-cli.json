@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/nexora-streamgate/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/nexora-streamgate/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/nexora-streamgate",
+  "projects": {
+    "analytics-api": {
+      "type": "application",
+      "root": "apps/analytics-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/analytics-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/analytics-api/tsconfig.app.json"
+      }
+    },
+    "contracts": {
+      "type": "library",
+      "root": "libs/contracts",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
+    "nexora-streamgate": {
+      "type": "application",
+      "root": "apps/nexora-streamgate",
+      "entryFile": "main",
+      "sourceRoot": "apps/nexora-streamgate/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/nexora-streamgate/tsconfig.app.json"
+      }
+    },
+    "processing-engine": {
+      "type": "application",
+      "root": "apps/processing-engine",
+      "entryFile": "main",
+      "sourceRoot": "apps/processing-engine/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/processing-engine/tsconfig.app.json"
+      }
+    }
+  }
+}

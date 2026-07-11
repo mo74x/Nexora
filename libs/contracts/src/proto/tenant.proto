@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package streamgate.tenant;
+
+// The Tenant Management Service definition.
+service TenantService {
+  rpc ValidateTenantKey (ValidateKeyRequest) returns (ValidateKeyResponse);
+}
+
+// Request payload containing the public routing token
+message ValidateKeyRequest {
+  string apiKey = 1;
+}
+
+// Response payload detailing provisioning configurations
+message ValidateKeyResponse {
+  bool isValid = 1;
+  string tenantId = 2;
+  int32 rateLimitWindowSec = 3;
+  int32 maxRequestsPerWindow = 4;
+  string status = 5;
+}
