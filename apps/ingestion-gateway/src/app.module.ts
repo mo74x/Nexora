@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { RedisModule } from './redis/redis.module';
 import { RateLimiterService } from './rate-limiting/rate-limiter.service';
 import { TenantIngestionGuard } from './guards/tenant-ingestion.guard';
-import {
-  TENANT_PACKAGE_NAME,
-  TENANT_SERVICE_NAME,
-} from '@streamgate/contracts';
+import { KafkaModule } from './kafka/kafka.module';
+import { EventsController } from './events/events.controller';
+import { EventsService } from './events/events.service';
+import { TENANT_PACKAGE_NAME } from '@streamgate/contracts';
 
 @Module({
   imports: [
     RedisModule,
-    // Register the internal gRPC client channel pointing to the Processing Engine
+    KafkaModule,
     ClientsModule.register([
       {
         name: 'TENANT_GRPC_CLIENT',
@@ -30,7 +29,12 @@ import {
       },
     ]),
   ],
-  providers: [RateLimiterService, TenantIngestionGuard],
+  providers: [
+    RateLimiterService,
+    TenantIngestionGuard,
+    EventsController,
+    EventsService,
+  ],
   exports: [ClientsModule, RateLimiterService, TenantIngestionGuard],
 })
 export class AppModule {}
