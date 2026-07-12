@@ -6,23 +6,36 @@ import { ProcessingEngineModule } from './processing-engine.module';
 import { TENANT_PACKAGE_NAME } from '@streamgate/contracts';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    ProcessingEngineModule,
-    {
-      transport: Transport.GRPC,
-      options: {
-        url: '0.0.0.0:50051',
-        package: TENANT_PACKAGE_NAME,
-        protoPath: join(
-          __dirname,
-          '../../../libs/contracts/src/proto/tenant.proto',
-        ),
+  const app = await NestFactory.create(ProcessingEngineModule);
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      url: '0.0.0.0:50051',
+      package: TENANT_PACKAGE_NAME,
+      protoPath: join(
+        __dirname,
+        '../../../libs/contracts/src/proto/tenant.proto',
+      ),
+    },
+  });
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        brokers: [process.env.KAFKA_BROKER || 'localhost:19092'],
+      },
+      consumer: {
+        groupId: 'streamgate-processing-group',
       },
     },
-  );
-  await app.listen();
+  });
+
+  // Start all connected microservices concurrently
+  await app.startAllMicroservices();
   console.log(
-    'Processing Engine gRPC Microservice is listening on port 50051...',
+    'Processing Engine running with dual gRPC & Kafka listeners active.',
   );
 }
 bootstrap();

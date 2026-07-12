@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ProcessingEngineController } from './processing-engine.controller';
-import { ProcessingEngineService } from './processing-engine.service';
+import { PrismaService } from './prisma/prisma.service';
+import { KafkaModule } from './kafka/kafka.module';
+import { MetricsController } from './metrics/metrics.controller';
+import { MetricsService } from './metrics/metrics.service';
+import { TenantController } from './tenant/tenant.controller';
 
 @Module({
-  imports: [],
-  controllers: [ProcessingEngineController],
-  providers: [ProcessingEngineService],
+  imports: [KafkaModule],
+  controllers: [MetricsController, TenantController],
+  providers: [MetricsService, PrismaService],
 })
 export class ProcessingEngineModule {}
