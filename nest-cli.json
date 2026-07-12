@@ -45,6 +45,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/processing-engine/tsconfig.app.json"
       }
+    },
+    "ingestion-gateway": {
+      "type": "application",
+      "root": "apps/ingestion-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/ingestion-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ingestion-gateway/tsconfig.app.json"
+      }
     }
   }
 }

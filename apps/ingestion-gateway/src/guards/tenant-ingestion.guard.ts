@@ -87,6 +87,8 @@ export class TenantIngestionGuard implements CanActivate, OnModuleInit {
       // Gracefully handle gRPC connection failures or downstream exceptions
       if (err instanceof HttpException) throw err;
 
+      console.error('TenantIngestionGuard error:', err);
+
       throw new HttpException(
         'Internal gateway routing error.',
         HttpStatus.INTERNAL_SERVER_ERROR,

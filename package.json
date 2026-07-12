@@ -16,9 +16,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
+    "db:seed": "ts-node apps/processing-engine/prisma/seed.ts",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/nexora-streamgate/test/jest-e2e.json",
     "proto:compile": "protoc --plugin=protoc-gen-ts_proto=.\\node_modules\\.bin\\protoc-gen-ts_proto.cmd --proto_path=libs/contracts/src --ts_proto_out=libs/contracts/src/ --ts_proto_opt=nestJs=true,esModuleInterop=true libs/contracts/src/proto/*.proto"
+  },
+  "prisma": {
+    "schema": "apps/processing-engine/prisma/schema.prisma",
+    "seed": "ts-node apps/processing-engine/prisma/seed.ts"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.4",
@@ -27,6 +32,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.1.28",
     "@nestjs/platform-express": "^11.0.1",
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
@@ -34,6 +40,7 @@
     "helmet": "^8.2.0",
     "ioredis": "^5.11.1",
     "kafkajs": "^2.2.4",
+    "pg": "^8.22.0",
     "prisma": "^7.8.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
@@ -47,6 +54,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
+    "@types/pg": "^8.20.0",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",

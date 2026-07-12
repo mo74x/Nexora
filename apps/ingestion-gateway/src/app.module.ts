@@ -29,12 +29,8 @@ import { TENANT_PACKAGE_NAME } from '@streamgate/contracts';
       },
     ]),
   ],
-  providers: [
-    RateLimiterService,
-    TenantIngestionGuard,
-    EventsController,
-    EventsService,
-  ],
+  controllers: [EventsController],
+  providers: [RateLimiterService, TenantIngestionGuard, EventsService],
   exports: [ClientsModule, RateLimiterService, TenantIngestionGuard],
 })
 export class AppModule {}
