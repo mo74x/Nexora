@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AnalyticsApiModule } from './analytics-api.module';
 
