@@ -1,30 +1,41 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { PrismaService } from '../prisma/prisma.service';
 import * as contracts from '@streamgate/contracts';
+import { TenantStatus } from '@prisma/client';
 
 @Controller()
 export class TenantController {
+  constructor(private readonly prisma: PrismaService) {}
+
   @GrpcMethod(contracts.TENANT_SERVICE_NAME, 'ValidateTenantKey')
-  validateTenantKey(
+  async validateTenantKey(
     data: contracts.ValidateKeyRequest,
-  ): contracts.ValidateKeyResponse {
-    // Mock database evaluation (we will bind Prisma here during database phase)
-    if (data.apiKey === 'nexora_super_secret_key') {
+  ): Promise<contracts.ValidateKeyResponse> {
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { apiKey: data.apiKey },
+    });
+
+    if (!tenant) {
       return {
-        isValid: true,
-        tenantId: 'tenant_uuid_production_01',
-        rateLimitWindowSec: 60,
-        maxRequestsPerWindow: 5000,
-        status: 'ACTIVE',
+        isValid: false,
+        tenantId: '',
+        rateLimitWindowSec: 0,
+        maxRequestsPerWindow: 0,
+        status: 'REVOKED',
       };
     }
 
     return {
-      isValid: false,
-      tenantId: '',
-      rateLimitWindowSec: 0,
-      maxRequestsPerWindow: 0,
-      status: 'REVOKED',
+      isValid: true,
+      tenantId: tenant.id,
+      rateLimitWindowSec: tenant.rateLimitWindowSec,
+      maxRequestsPerWindow: tenant.maxRequestsPerWindow,
+      status: tenant.status, // ACTIVE, SUSPENDED, etc.
     };
   }
 }

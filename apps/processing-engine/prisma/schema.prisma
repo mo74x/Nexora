@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+}
+
+model Tenant {
+  id                   String             @id @default(uuid())
+  name                 String
+  apiKey               String             @unique
+  status               TenantStatus       @default(ACTIVE)
+  maxRequestsPerWindow Int                @default(1000)
+  rateLimitWindowSec   Int                @default(60)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  hourlyAggregates     HourlyEventMetric[]
+
+  @@index([apiKey]) // Fast internal gRPC lookups
+}
+
+model HourlyEventMetric {
+  id         String   @id @default(uuid())
+  tenantId   String
+  eventType  String
+  source     String
+  hourTimestamp DateTime // Truncated to the top of the hour (e.g., 2026-07-11T22:00:00Z)
+  eventCount Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Composite unique constraint forces atomic UPSERT blocks during stream consumption
+  @@unique([tenantId, eventType, source, hourTimestamp])
+  // Index for fast dashboard retrieval via the GraphQL API
+  @@index([tenantId, hourTimestamp])
+}
